@@ -1,0 +1,80 @@
+const path = require("path");
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const ManifestPlugin = require('webpack-manifest-plugin');
+module.exports = {
+    // entry:'./src/index.js',
+    entry:{
+        app:'./src/index.js',
+        // print:'./src/print.js'
+    },
+    // entry:{
+    //     index:'./src/index.js',
+    //     // another: './src/another.js'
+    // },
+
+    开发source map
+    devtool: 'inline-source-map',
+    //服务器模式  热更新 
+    devServer: {
+         contentBase: './dist',
+         hot:true
+    },
+    plugins: [
+        删除dist文件夹里面的文件
+        new CleanWebpackPlugin(),
+    编写disk文件夹里面的index.html的内容
+        new HtmlWebpackPlugin({
+            title: 'another Management'
+        }),
+        new webpack.NamedModulesPlugin(),
+        new webpack.HotModuleReplacementPlugin()
+        // new webpack.optimize.CommonsChunkPlugin({
+        //     name:'common'
+        // })
+    ],
+    // module:{      
+    //       rules : [{
+    //           test: /\.css$/,
+    //           use:['style-loader','css-loader']
+    //       }]
+    // },
+    因为 提取公共内容的插件的问题 需要改写成optimization的属性形式;
+    // optimization: {
+    //     splitChunks: {
+    //         cacheGroups: {
+    //             commons: {
+    //                 name: "commons",
+    //                 chunks: "initial",
+    //                 minChunks: 2
+    //             }
+    //         }
+    //     }
+    // },
+    output:{
+        // filename:'bundle.js',
+        filename:'[name].bundle.js', 
+        chunkFilename: '[name].bundle.js',     
+        path : path.resolve(__dirname,'dist')
+    },
+    module:{
+        rules:[
+            {
+                test:/\.css$/,
+                use:[
+                    'style-loader',
+                    'css-loader'
+                ]
+            },
+            {
+                test:/\.(jpg|gif|png|svg)$/,
+                use:[
+                    'file-loader'
+                ]
+            }
+        ]
+    },
+    //设置模式
+    mode: "production"
+}
